@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#13243a">
+    <title>Betty Barbearia — Agendamento</title>
+
+    <!-- href normal = funciona ao abrir o arquivo direto; th:href = funciona dentro do Spring -->
+    <link rel="icon" type="image/svg+xml" href="../static/img/favicon.svg" th:href="@{/img/favicon.svg}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div id="faixa-demo" class="faixa-demo" hidden>
+    <strong>Modo demonstração.</strong>
+    Você abriu o arquivo direto, então nada é salvo. Para usar de verdade, rode o app e abra
+    <code>http://localhost:8080</code>.
+</div>
+
+<header class="topo">
+    <div class="topo-conteudo">
+        <svg class="poste" viewBox="0 0 80 220" role="img" aria-label="Poste de barbeiro" focusable="false">
+            <defs>
+                <pattern id="listras" width="40" height="40" patternUnits="userSpaceOnUse" patternTransform="rotate(-30)">
+                    <rect width="40" height="40" fill="#f2ead8"/>
+                    <rect width="10" height="40" fill="#c8372d"/>
+                    <rect x="20" width="10" height="40" fill="#2a5ea8"/>
+                    <animateTransform attributeName="patternTransform" type="translate" additive="sum"
+                                      from="0 0" to="40 0" dur="2.4s" repeatCount="indefinite"/>
+                </pattern>
+                <clipPath id="vidro"><rect x="16" y="34" width="48" height="152" rx="24"/></clipPath>
+                <linearGradient id="brilho" x1="0" x2="1">
+                    <stop offset="0" stop-color="#fff" stop-opacity=".0"/>
+                    <stop offset=".25" stop-color="#fff" stop-opacity=".45"/>
+                    <stop offset=".45" stop-color="#fff" stop-opacity="0"/>
+                    <stop offset="1" stop-color="#000" stop-opacity=".28"/>
+                </linearGradient>
+            </defs>
+            <rect x="22" y="4" width="36" height="30" rx="6" fill="#d9d2c0"/>
+            <rect x="26" y="26" width="28" height="10" rx="3" fill="#a79f8c"/>
+            <g clip-path="url(#vidro)">
+                <rect x="0" y="0" width="80" height="220" fill="url(#listras)"/>
+                <rect x="16" y="34" width="48" height="152" fill="url(#brilho)"/>
+            </g>
+            <rect x="16" y="34" width="48" height="152" rx="24" fill="none" stroke="#0b1726" stroke-width="3"/>
+            <rect x="26" y="184" width="28" height="10" rx="3" fill="#a79f8c"/>
+            <rect x="22" y="190" width="36" height="26" rx="6" fill="#d9d2c0"/>
+        </svg>
+
+        <div class="marca">
+            <svg class="tesoura" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+                <g fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="16" cy="48" r="8"/>
+                    <circle cx="48" cy="48" r="8"/>
+                    <path d="M21 42L50 6M43 42L14 6"/>
+                </g>
+            </svg>
+            <h1>Betty <span>Barbearia</span></h1>
+            <p>Escolha o serviço, o barbeiro e o horário. Leva menos de um minuto.</p>
+        </div>
+    </div>
+</header>
+
+
+
+<main>
+    <!-- ================= ABA: AGENDAR ================= -->
+    <section id="agendar" class="painel ativo">
+        <div class="layout">
+            <div class="passos">
+
+                <section class="bloco">
+                    <h2><span class="num">1</span> Escolha o serviço</h2>
+                    <div id="lista-servicos" class="cards"></div>
+                </section>
+
+                <section class="bloco">
+                    <h2><span class="num">2</span> Escolha o barbeiro</h2>
+                    <div id="lista-barbeiros" class="cards barbeiros"></div>
+                </section>
+
+                <section class="bloco">
+                    <h2><span class="num">3</span> Data e horário</h2>
+                    <div id="faixa-dias" class="dias" role="listbox" aria-label="Dias"></div>
+                    <label class="outra-data" for="campo-data">Outra data
+                        <input type="date" id="campo-data">
+                    </label>
+                    <p id="aviso-horarios" class="aviso">Selecione serviço, barbeiro e data.</p>
+                    <div id="lista-horarios" class="horarios"></div>
+                </section>
+
+                <section class="bloco">
+                    <h2><span class="num">4</span> Seus dados</h2>
+                    <div class="campos">
+                        <div>
+                            <label for="campo-nome">Nome</label>
+                            <input type="text" id="campo-nome" placeholder="Como podemos te chamar?" maxlength="80" autocomplete="name">
+                        </div>
+                        <div>
+                            <label for="campo-telefone">Telefone (com DDD)</label>
+                            <input type="tel" id="campo-telefone" placeholder="(84) 99999-9999" maxlength="16" autocomplete="tel">
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Comanda / resumo -->
+            <aside class="comanda" aria-live="polite">
+                <h3>Sua comanda</h3>
+                <dl>
+                    <div><dt>Serviço</dt><dd id="res-servico" class="vazio">—</dd></div>
+                    <div><dt>Barbeiro</dt><dd id="res-barbeiro" class="vazio">—</dd></div>
+                    <div><dt>Dia</dt><dd id="res-data" class="vazio">—</dd></div>
+                    <div><dt>Horário</dt><dd id="res-hora" class="vazio">—</dd></div>
+                </dl>
+                <div class="total"><span>Total</span><strong id="res-total">R$ 0,00</strong></div>
+                <div id="mensagem" class="mensagem" hidden></div>
+                <button id="btn-confirmar" class="btn-principal" type="button" disabled>Confirmar agendamento</button>
+                <p id="dica-confirmar" class="dica">Preencha as 4 etapas para confirmar.</p>
+            </aside>
+        </div>
+    </section>
+
+</main>
+
+<!-- Confirmação -->
+<dialog id="dialogo" class="dialogo">
+    <div class="ticket">
+        <div class="selo" aria-hidden="true">✓</div>
+        <h2>Horário reservado</h2>
+        <p id="dialogo-texto"></p>
+        <button id="dialogo-fechar" class="btn-principal" type="button">Fazer outro agendamento</button>
+    </div>
+</dialog>
+
+<footer class="rodape">
+    <div class="listra" aria-hidden="true"></div>
+    Betty Barbearia · Seg a Sáb, 09h às 19h (almoço 12h–13h) · Domingo fechado
+    <br><a class="link-equipe" href="/painel" th:href="@{/painel}">Área da equipe</a>
+</footer>
+
+<script src="../static/js/app.js" th:src="@{/js/app.js}"></script>
+</body>
+</html>

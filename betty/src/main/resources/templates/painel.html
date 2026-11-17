@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#13243a">
+    <meta name="robots" content="noindex">
+    <title>Betty Barbearia — Painel da equipe</title>
+    <link rel="icon" type="image/svg+xml" href="../static/img/favicon.svg" th:href="@{/img/favicon.svg}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="topo">
+    <div class="topo-conteudo">
+        <div class="marca">
+            <svg class="tesoura" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+                <g fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="16" cy="48" r="8"/><circle cx="48" cy="48" r="8"/><path d="M21 42L50 6M43 42L14 6"/>
+                </g>
+            </svg>
+            <h1>Betty <span>Painel da equipe</span></h1>
+        </div>
+    </div>
+</header>
+
+<!-- ============ LOGIN ============ -->
+<main id="tela-login" hidden>
+    <form class="login-caixa" id="form-login" autocomplete="on">
+        <h2>Entrar</h2>
+        <p>Acesso para o dono e os barbeiros.</p>
+        <div id="login-erro" class="mensagem erro" hidden></div>
+        <label for="login-usuario">Usuário</label>
+        <input type="text" id="login-usuario" class="campo" autocomplete="username" autocapitalize="none" required>
+        <label for="login-senha">Senha</label>
+        <input type="password" id="login-senha" autocomplete="current-password" required>
+        <button type="submit" class="btn-principal" id="btn-entrar">Entrar</button>
+        <p class="dica">Contas de teste: <code>dono</code> / <code>dono123</code> ou <code>carlos</code> / <code>carlos123</code></p>
+    </form>
+</main>
+
+<!-- ============ PAINEL ============ -->
+<div id="tela-painel" hidden>
+    <div class="barra-usuario">
+        <span class="quem">Olá, <strong id="usuario-nome"></strong><span id="usuario-papel" class="selo-papel"></span></span>
+        <button type="button" id="btn-sair" class="btn-sec">Sair</button>
+    </div>
+
+    <nav class="abas" aria-label="Seções do painel">
+        <button class="aba ativa" data-aba="aba-agenda" type="button">Agenda</button>
+        <button class="aba so-dono" data-aba="aba-equipe" type="button" hidden>Equipe</button>
+        <button class="aba so-dono" data-aba="aba-servicos" type="button" hidden>Serviços</button>
+    </nav>
+
+    <main>
+        <div id="msg-painel" class="mensagem msg-painel" hidden></div>
+
+        <!-- AGENDA -->
+        <section id="aba-agenda" class="painel ativo">
+            <div class="agenda-topo">
+                <button id="dia-anterior" class="btn-seta" type="button" aria-label="Dia anterior">‹</button>
+                <div class="agenda-titulo">
+                    <h2 id="agenda-titulo">Agenda do dia</h2>
+                    <small id="agenda-resumo"></small>
+                </div>
+                <button id="dia-seguinte" class="btn-seta" type="button" aria-label="Próximo dia">›</button>
+                <input type="date" id="agenda-data" aria-label="Escolher dia da agenda">
+            </div>
+            <div id="filtro-barbeiro" class="filtro-barbeiro" hidden>
+                <label for="agenda-barbeiro">Barbeiro</label>
+                <select id="agenda-barbeiro"></select>
+            </div>
+            <div class="resumo-dia">
+                <div><small>Atendimentos</small><strong id="res-qtd">0</strong></div>
+                <div><small>Faturamento previsto</small><strong id="res-valor">R$ 0,00</strong></div>
+            </div>
+            <div id="lista-agenda" class="agenda-lista"></div>
+        </section>
+
+        <!-- EQUIPE (dono) -->
+        <section id="aba-equipe" class="painel">
+            <div id="lista-equipe" class="lista-admin"></div>
+            <form id="form-barbeiro" class="form-admin" autocomplete="off">
+                <h3>Novo barbeiro</h3>
+                <div class="campos">
+                    <div><label for="nb-nome">Nome</label><input type="text" id="nb-nome" class="campo" maxlength="60" required></div>
+                    <div><label for="nb-login">Login</label><input type="text" id="nb-login" class="campo" maxlength="30" autocapitalize="none" required></div>
+                    <div><label for="nb-senha">Senha (mín. 6)</label><input type="password" id="nb-senha" autocomplete="new-password" required></div>
+                </div>
+                <button type="submit" class="btn-principal">Adicionar barbeiro</button>
+            </form>
+        </section>
+
+        <!-- SERVIÇOS (dono) -->
+        <section id="aba-servicos" class="painel">
+            <div id="lista-servicos-admin" class="lista-admin"></div>
+            <form id="form-servico" class="form-admin" autocomplete="off">
+                <h3>Novo serviço</h3>
+                <div class="campos">
+                    <div><label for="ns-nome">Nome</label><input type="text" id="ns-nome" class="campo" maxlength="60" required></div>
+                    <div><label for="ns-duracao">Duração (min)</label><input type="number" id="ns-duracao" min="10" max="240" step="5" value="30" required></div>
+                    <div><label for="ns-preco">Preço (R$)</label><input type="number" id="ns-preco" min="1" step="0.01" required></div>
+                </div>
+                <button type="submit" class="btn-principal">Adicionar serviço</button>
+            </form>
+        </section>
+    </main>
+</div>
+
+<footer class="rodape">
+    <div class="listra" aria-hidden="true"></div>
+    <a class="link-equipe" href="/" th:href="@{/}">← Voltar para a página do cliente</a>
+</footer>
+
+<script src="../static/js/painel.js" th:src="@{/js/painel.js}"></script>
+</body>
+</html>
